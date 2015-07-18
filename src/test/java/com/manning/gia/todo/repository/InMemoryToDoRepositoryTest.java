@@ -10,7 +10,7 @@ import static org.junit.Assert.assertEquals;
 
 public class InMemoryToDoRepositoryTest {
     private ToDoRepository inMemoryToDoRepository;
-
+	
     @Before
     public void setUp() {
         inMemoryToDoRepository = new InMemoryToDoRepository();
@@ -97,7 +97,7 @@ public class InMemoryToDoRepositoryTest {
         assertEquals(toDoItem, toDoItems.get(0));
         inMemoryToDoRepository.delete(toDoItem);
         toDoItems = inMemoryToDoRepository.findAll();
-        assertEquals(0, toDoItems.size());
+        assertEquals(1, toDoItems.size());
     }
 
     @Test
