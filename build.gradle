@@ -3,7 +3,7 @@ apply plugin: 'war'
 
 repositories {
     maven{ 
-    	url 'http://localhost:8787/artifactory/libs-release'
+    	url 'http://localhost:8081/artifactory/libs-release'
     	credentials {
                 username "admin"
                 password "password"
