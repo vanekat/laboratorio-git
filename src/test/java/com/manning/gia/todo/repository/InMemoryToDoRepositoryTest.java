@@ -97,7 +97,7 @@ public class InMemoryToDoRepositoryTest {
         assertEquals(toDoItem, toDoItems.get(0));
         inMemoryToDoRepository.delete(toDoItem);
         toDoItems = inMemoryToDoRepository.findAll();
-        assertEquals(1, toDoItems.size());
+        assertEquals(0, toDoItems.size());
     }
 
     @Test
