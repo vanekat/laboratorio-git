@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.manning.gia.todo.repository.InMemoryToDoRepositoryTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2015-07-18T15:53:09" hostname="A505-S6033" time="0.015">
+  <properties/>
+  <testcase name="testInsertToDoItem" classname="com.manning.gia.todo.repository.InMemoryToDoRepositoryTest" time="0.0050"/>
+  <testcase name="testFindAllActiveToDoItems" classname="com.manning.gia.todo.repository.InMemoryToDoRepositoryTest" time="0.0"/>
+  <testcase name="testDeleteToDoItem" classname="com.manning.gia.todo.repository.InMemoryToDoRepositoryTest" time="0.0"/>
+  <testcase name="testFindAllToDoItems" classname="com.manning.gia.todo.repository.InMemoryToDoRepositoryTest" time="0.0"/>
+  <testcase name="testFindAllCompletedToDoItems" classname="com.manning.gia.todo.repository.InMemoryToDoRepositoryTest" time="0.0"/>
+  <testcase name="testFindToDoItemById" classname="com.manning.gia.todo.repository.InMemoryToDoRepositoryTest" time="0.0"/>
+  <testcase name="testUpdateToDoItem" classname="com.manning.gia.todo.repository.InMemoryToDoRepositoryTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

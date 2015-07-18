@@ -1,0 +1,30 @@
+/*
+Referencias: 
+https://gist.github.com/zhouji/5012160
+https://github.com/kercheval/GradleCMPlugin/wiki/Copy-Static-Content-Using-SSH-and-Gradle
+http://www.hashbangcode.com/blog/connecting-vagrant-box-without-vagrant-ssh-command
+https://gradle-ssh-plugin.github.io/docs/
+*/
+
+plugins {
+  id 'org.hidetake.ssh' version '1.1.3'
+}
+
+remotes {
+  webQA {
+    role 'webQA'
+    host = '127.0.0.1'
+    user = 'vagrant'
+    identity=file('/Users/snahider/.vagrant.d/insecure_private_key')
+    port = 2222
+  }
+}
+
+task executeRemote << {
+    ssh.run {
+        session(remotes.webQA) {
+            execute 'uname -a'
+            execute 'cat /etc/*-release', ignoreError: true
+        }
+    }
+}

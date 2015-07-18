@@ -1,0 +1,48 @@
+ext.seleniumVersion = '2.46.0'
+
+dependencies {
+    testCompile "org.seleniumhq.selenium:selenium-api:$seleniumVersion"
+    testCompile "org.seleniumhq.selenium:selenium-firefox-driver:$seleniumVersion"
+}
+
+sourceSets {
+    functionalTest {
+        java.srcDir file('src/functTest/java')
+        resources.srcDir file('src/functTest/resources')
+        compileClasspath = sourceSets.main.output + configurations.testCompile
+        runtimeClasspath = output + compileClasspath + configurations.testRuntime
+    }
+}
+
+task functionalJettyRun(type: org.gradle.api.plugins.jetty.JettyRun) {
+    httpPort = 9090
+    stopPort = 8051
+    stopKey = 'stopKey'
+    contextPath = 'todo'
+    daemon = true
+}
+
+task functionalJettyStop(type: org.gradle.api.plugins.jetty.JettyStop) {
+    stopPort = 8051
+    stopKey = 'stopKey'
+}
+
+task localFunctionalTest(type: Test) {
+    testClassesDir = sourceSets.functionalTest.output.classesDir
+    classpath = sourceSets.functionalTest.runtimeClasspath
+    reports.html.destination = file("$test.reports.html.destination/functional")
+    reports.junitXml.destination = file("$test.reports.junitXml.destination/functional")
+    systemProperty 'selenium.baseUrl', "http://localhost:9090/todo"
+    dependsOn functionalJettyRun
+    finalizedBy functionalJettyStop
+}
+
+task remoteFunctionalTest(type: Test) {
+    testClassesDir = sourceSets.functionalTest.output.classesDir
+    classpath = sourceSets.functionalTest.runtimeClasspath
+    reports.html.destination = file("$test.reports.html.destination/functional")
+    reports.junitXml.destination = file("$test.reports.junitXml.destination/functional")
+    systemProperty 'selenium.baseUrl', "http://localhost:9090/todo/remote"
+}
+
+//check.dependsOn localFunctionalTest

@@ -1,0 +1,19 @@
+apply plugin: 'java'
+apply plugin: 'war'
+
+repositories {
+    maven{ 
+    	url 'http://localhost:8787/artifactory/libs-release'
+    	credentials {
+                username "admin"
+                password "password"
+            }
+    }
+}
+
+dependencies {
+    providedCompile 'javax.servlet:servlet-api:2.5'
+    runtime 'javax.servlet:jstl:1.1.2'
+    runtime 'taglibs:standard:1.1.2'
+    testCompile 'junit:junit:4.11'
+}
