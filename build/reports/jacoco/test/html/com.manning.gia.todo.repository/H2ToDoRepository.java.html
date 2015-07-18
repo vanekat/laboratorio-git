@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>H2ToDoRepository.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">todo</a> &gt; <a href="index.source.html" class="el_package">com.manning.gia.todo.repository</a> &gt; <span class="el_source">H2ToDoRepository.java</span></div><h1>H2ToDoRepository.java</h1><pre class="source lang-java linenums">package com.manning.gia.todo.repository;
+
+import com.manning.gia.todo.model.ToDoItem;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+<span class="nc" id="L9">public class H2ToDoRepository implements ToDoRepository {</span>
+    @Override
+    public List&lt;ToDoItem&gt; findAll() {
+<span class="nc" id="L12">        List&lt;ToDoItem&gt; toDoItems = new ArrayList&lt;ToDoItem&gt;();</span>
+<span class="nc" id="L13">        Connection conn = null;</span>
+<span class="nc" id="L14">        Statement stmt = null;</span>
+<span class="nc" id="L15">        ResultSet rs = null;</span>
+
+        try {
+<span class="nc" id="L18">            conn = createConnection();</span>
+<span class="nc" id="L19">            stmt = conn.createStatement();</span>
+<span class="nc" id="L20">            rs = stmt.executeQuery(&quot;SELECT id, name, completed from todo_item&quot;);</span>
+
+<span class="nc bnc" id="L22" title="All 2 branches missed.">            while(rs.next()) {</span>
+<span class="nc" id="L23">                ToDoItem toDoItem = new ToDoItem();</span>
+<span class="nc" id="L24">                toDoItem.setId(rs.getLong(&quot;id&quot;));</span>
+<span class="nc" id="L25">                toDoItem.setName(rs.getString(&quot;name&quot;));</span>
+<span class="nc" id="L26">                toDoItem.setCompleted(rs.getBoolean(&quot;completed&quot;));</span>
+<span class="nc" id="L27">                toDoItems.add(toDoItem);</span>
+<span class="nc" id="L28">            }</span>
+        }
+<span class="nc" id="L30">        catch(Exception e) {</span>
+<span class="nc" id="L31">            e.printStackTrace();</span>
+        }
+        finally {
+<span class="nc" id="L34">            closeConnection(conn);</span>
+<span class="nc" id="L35">            closeStatement(stmt);</span>
+<span class="nc" id="L36">            closeResultSet(rs);</span>
+<span class="nc" id="L37">        }</span>
+
+<span class="nc" id="L39">        return toDoItems;</span>
+    }
+
+    @Override
+    public List&lt;ToDoItem&gt; findAllActive() {
+<span class="nc" id="L44">        List&lt;ToDoItem&gt; activeToDos = new ArrayList&lt;ToDoItem&gt;();</span>
+<span class="nc" id="L45">        Connection conn = null;</span>
+<span class="nc" id="L46">        Statement stmt = null;</span>
+<span class="nc" id="L47">        ResultSet rs = null;</span>
+
+        try {
+<span class="nc" id="L50">            conn = createConnection();</span>
+<span class="nc" id="L51">            stmt = conn.createStatement();</span>
+<span class="nc" id="L52">            rs = stmt.executeQuery(&quot;SELECT id, name, completed FROM todo_item WHERE completed = 0&quot;);</span>
+
+<span class="nc bnc" id="L54" title="All 2 branches missed.">            while(rs.next()) {</span>
+<span class="nc" id="L55">                ToDoItem toDoItem = new ToDoItem();</span>
+<span class="nc" id="L56">                toDoItem.setId(rs.getLong(&quot;id&quot;));</span>
+<span class="nc" id="L57">                toDoItem.setName(rs.getString(&quot;name&quot;));</span>
+<span class="nc" id="L58">                toDoItem.setCompleted(rs.getBoolean(&quot;completed&quot;));</span>
+<span class="nc" id="L59">                activeToDos.add(toDoItem);</span>
+<span class="nc" id="L60">            }</span>
+        }
+<span class="nc" id="L62">        catch(Exception e) {</span>
+<span class="nc" id="L63">            e.printStackTrace();</span>
+        }
+        finally {
+<span class="nc" id="L66">            closeConnection(conn);</span>
+<span class="nc" id="L67">            closeStatement(stmt);</span>
+<span class="nc" id="L68">            closeResultSet(rs);</span>
+<span class="nc" id="L69">        }</span>
+
+<span class="nc" id="L71">        return activeToDos;</span>
+    }
+
+    @Override
+    public List&lt;ToDoItem&gt; findAllCompleted() {
+<span class="nc" id="L76">        List&lt;ToDoItem&gt; completedToDos = new ArrayList&lt;ToDoItem&gt;();</span>
+<span class="nc" id="L77">        Connection conn = null;</span>
+<span class="nc" id="L78">        Statement stmt = null;</span>
+<span class="nc" id="L79">        ResultSet rs = null;</span>
+
+        try {
+<span class="nc" id="L82">            conn = createConnection();</span>
+<span class="nc" id="L83">            stmt = conn.createStatement();</span>
+<span class="nc" id="L84">            rs = stmt.executeQuery(&quot;SELECT id, name, completed FROM todo_item WHERE completed = 1&quot;);</span>
+
+<span class="nc bnc" id="L86" title="All 2 branches missed.">            while(rs.next()) {</span>
+<span class="nc" id="L87">                ToDoItem toDoItem = new ToDoItem();</span>
+<span class="nc" id="L88">                toDoItem.setId(rs.getLong(&quot;id&quot;));</span>
+<span class="nc" id="L89">                toDoItem.setName(rs.getString(&quot;name&quot;));</span>
+<span class="nc" id="L90">                toDoItem.setCompleted(rs.getBoolean(&quot;completed&quot;));</span>
+<span class="nc" id="L91">                completedToDos.add(toDoItem);</span>
+<span class="nc" id="L92">            }</span>
+        }
+<span class="nc" id="L94">        catch(Exception e) {</span>
+<span class="nc" id="L95">            e.printStackTrace();</span>
+        }
+        finally {
+<span class="nc" id="L98">            closeConnection(conn);</span>
+<span class="nc" id="L99">            closeStatement(stmt);</span>
+<span class="nc" id="L100">            closeResultSet(rs);</span>
+<span class="nc" id="L101">        }</span>
+
+<span class="nc" id="L103">        return completedToDos;</span>
+    }
+
+    @Override
+    public ToDoItem findById(Long id) {
+<span class="nc" id="L108">        ToDoItem toDoItem = null;</span>
+<span class="nc" id="L109">        Connection conn = null;</span>
+<span class="nc" id="L110">        PreparedStatement stmt = null;</span>
+<span class="nc" id="L111">        ResultSet rs = null;</span>
+
+        try {
+<span class="nc" id="L114">            conn = createConnection();</span>
+<span class="nc" id="L115">            stmt = conn.prepareStatement(&quot;SELECT id, name, completed from todo_item WHERE id = ?&quot;);</span>
+<span class="nc" id="L116">            stmt.setLong(1, id);</span>
+<span class="nc" id="L117">            rs = stmt.executeQuery();</span>
+
+<span class="nc bnc" id="L119" title="All 2 branches missed.">            if(rs.first()) {</span>
+<span class="nc" id="L120">                toDoItem = new ToDoItem();</span>
+<span class="nc" id="L121">                toDoItem.setId(rs.getLong(&quot;id&quot;));</span>
+<span class="nc" id="L122">                toDoItem.setName(rs.getString(&quot;name&quot;));</span>
+<span class="nc" id="L123">                toDoItem.setCompleted(rs.getBoolean(&quot;completed&quot;));</span>
+            }
+        }
+<span class="nc" id="L126">        catch(Exception e) {</span>
+<span class="nc" id="L127">            e.printStackTrace();</span>
+        }
+        finally {
+<span class="nc" id="L130">            closeConnection(conn);</span>
+<span class="nc" id="L131">            closeStatement(stmt);</span>
+<span class="nc" id="L132">            closeResultSet(rs);</span>
+<span class="nc" id="L133">        }</span>
+
+<span class="nc" id="L135">        return toDoItem;</span>
+    }
+
+    @Override
+    public Long insert(ToDoItem toDoItem) {
+<span class="nc" id="L140">        Connection conn = null;</span>
+<span class="nc" id="L141">        PreparedStatement stmt = null;</span>
+<span class="nc" id="L142">        ResultSet rs = null;</span>
+<span class="nc" id="L143">        Long newId = null;</span>
+
+        try {
+<span class="nc" id="L146">            conn = createConnection();</span>
+<span class="nc" id="L147">            stmt = conn.prepareStatement(&quot;INSERT INTO todo_item (name, completed) VALUES (?,?)&quot;, Statement.RETURN_GENERATED_KEYS);</span>
+<span class="nc" id="L148">            stmt.setString(1, toDoItem.getName());</span>
+<span class="nc" id="L149">            stmt.setBoolean(2, toDoItem.isCompleted());</span>
+<span class="nc" id="L150">            stmt.executeUpdate();</span>
+
+<span class="nc" id="L152">            rs = stmt.getGeneratedKeys();</span>
+
+<span class="nc bnc" id="L154" title="All 2 branches missed.">            if(rs.next()) {</span>
+<span class="nc" id="L155">                newId = rs.getLong(1);</span>
+            }
+        }
+<span class="nc" id="L158">        catch(Exception e) {</span>
+<span class="nc" id="L159">            e.printStackTrace();</span>
+        }
+        finally {
+<span class="nc" id="L162">            closeConnection(conn);</span>
+<span class="nc" id="L163">            closeStatement(stmt);</span>
+<span class="nc" id="L164">            closeResultSet(rs);</span>
+<span class="nc" id="L165">        }</span>
+
+<span class="nc" id="L167">        return newId;</span>
+    }
+
+    @Override
+    public void update(ToDoItem toDoItem) {
+<span class="nc" id="L172">        Connection conn = null;</span>
+<span class="nc" id="L173">        PreparedStatement stmt = null;</span>
+<span class="nc" id="L174">        ResultSet rs = null;</span>
+
+        try {
+<span class="nc" id="L177">            conn = createConnection();</span>
+<span class="nc" id="L178">            stmt = conn.prepareStatement(&quot;UPDATE todo_item SET name = ?, completed = ? where id = ?&quot;);</span>
+<span class="nc" id="L179">            stmt.setString(1, toDoItem.getName());</span>
+<span class="nc" id="L180">            stmt.setBoolean(2, toDoItem.isCompleted());</span>
+<span class="nc" id="L181">            stmt.setLong(3, toDoItem.getId());</span>
+<span class="nc" id="L182">            stmt.executeUpdate();</span>
+        }
+<span class="nc" id="L184">        catch(Exception e) {</span>
+<span class="nc" id="L185">            e.printStackTrace();</span>
+        }
+        finally {
+<span class="nc" id="L188">            closeConnection(conn);</span>
+<span class="nc" id="L189">            closeStatement(stmt);</span>
+<span class="nc" id="L190">            closeResultSet(rs);</span>
+<span class="nc" id="L191">        }</span>
+<span class="nc" id="L192">    }</span>
+
+    @Override
+    public void delete(ToDoItem toDoItem) {
+<span class="nc" id="L196">        Connection conn = null;</span>
+<span class="nc" id="L197">        PreparedStatement stmt = null;</span>
+<span class="nc" id="L198">        ResultSet rs = null;</span>
+
+        try {
+<span class="nc" id="L201">            conn = createConnection();</span>
+<span class="nc" id="L202">            stmt = conn.prepareStatement(&quot;DELETE FROM todo_item WHERE id = ?&quot;);</span>
+<span class="nc" id="L203">            stmt.setLong(1, toDoItem.getId());</span>
+<span class="nc" id="L204">            stmt.executeUpdate();</span>
+        }
+<span class="nc" id="L206">        catch(Exception e) {</span>
+<span class="nc" id="L207">            e.printStackTrace();</span>
+        }
+        finally {
+<span class="nc" id="L210">            closeConnection(conn);</span>
+<span class="nc" id="L211">            closeStatement(stmt);</span>
+<span class="nc" id="L212">            closeResultSet(rs);</span>
+<span class="nc" id="L213">        }</span>
+<span class="nc" id="L214">    }</span>
+
+    private Connection createConnection() throws ClassNotFoundException, SQLException {
+<span class="nc" id="L217">        Class.forName(&quot;org.h2.Driver&quot;);</span>
+<span class="nc" id="L218">        return DriverManager.getConnection(&quot;jdbc:h2:~/todo&quot;, &quot;sa&quot;, &quot;&quot;);</span>
+    }
+
+    private void closeConnection(Connection connection) {
+<span class="nc bnc" id="L222" title="All 2 branches missed.">        if(connection != null) {</span>
+            try {
+<span class="nc" id="L224">                connection.close();</span>
+            }
+<span class="nc" id="L226">            catch(SQLException e) {}</span>
+        }
+<span class="nc" id="L228">    }</span>
+
+    private void closeStatement(Statement statement) {
+<span class="nc bnc" id="L231" title="All 2 branches missed.">        if(statement != null) {</span>
+            try {
+<span class="nc" id="L233">                statement.close();</span>
+            }
+<span class="nc" id="L235">            catch(SQLException e) {}</span>
+        }
+<span class="nc" id="L237">    }</span>
+
+    private void closeResultSet(ResultSet resultSet) {
+<span class="nc bnc" id="L240" title="All 2 branches missed.">        if(resultSet != null) {</span>
+            try {
+<span class="nc" id="L242">                resultSet.close();</span>
+            }
+<span class="nc" id="L244">            catch(SQLException e) {}</span>
+        }
+<span class="nc" id="L246">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.1.201405082137</span></div></body></html>

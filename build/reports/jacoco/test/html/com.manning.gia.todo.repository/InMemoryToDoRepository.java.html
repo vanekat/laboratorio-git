@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>InMemoryToDoRepository.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">todo</a> &gt; <a href="index.source.html" class="el_package">com.manning.gia.todo.repository</a> &gt; <span class="el_source">InMemoryToDoRepository.java</span></div><h1>InMemoryToDoRepository.java</h1><pre class="source lang-java linenums">package com.manning.gia.todo.repository;
+
+import com.manning.gia.todo.model.ToDoItem;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicLong;
+
+<span class="fc" id="L12">public class InMemoryToDoRepository implements ToDoRepository {</span>
+<span class="fc" id="L13">    private AtomicLong currentId = new AtomicLong();</span>
+<span class="fc" id="L14">    private ConcurrentMap&lt;Long, ToDoItem&gt; toDos = new ConcurrentHashMap&lt;Long, ToDoItem&gt;();</span>
+
+    @Override
+    public List&lt;ToDoItem&gt; findAll() {
+<span class="fc" id="L18">        List&lt;ToDoItem&gt; toDoItems = new ArrayList&lt;ToDoItem&gt;(toDos.values());</span>
+<span class="fc" id="L19">        Collections.sort(toDoItems);</span>
+<span class="fc" id="L20">        return toDoItems;</span>
+    }
+
+    @Override
+    public List&lt;ToDoItem&gt; findAllActive() {
+<span class="fc" id="L25">        List&lt;ToDoItem&gt; activeToDos = new ArrayList&lt;ToDoItem&gt;();</span>
+
+<span class="fc" id="L27">        synchronized(toDos) {</span>
+<span class="fc bfc" id="L28" title="All 2 branches covered.">            for(ToDoItem toDoItem : toDos.values()) {</span>
+<span class="pc bpc" id="L29" title="1 of 2 branches missed.">                if(!toDoItem.isCompleted()) {</span>
+<span class="fc" id="L30">                    activeToDos.add(toDoItem);</span>
+                }
+            }
+<span class="pc" id="L33">        }</span>
+
+<span class="fc" id="L35">        return activeToDos;</span>
+    }
+
+    @Override
+    public List&lt;ToDoItem&gt; findAllCompleted() {
+<span class="fc" id="L40">        List&lt;ToDoItem&gt; completedToDos = new ArrayList&lt;ToDoItem&gt;();</span>
+
+<span class="fc" id="L42">        synchronized(toDos) {</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">            for(ToDoItem toDoItem : toDos.values()) {</span>
+<span class="fc bfc" id="L44" title="All 2 branches covered.">                if(toDoItem.isCompleted()) {</span>
+<span class="fc" id="L45">                    completedToDos.add(toDoItem);</span>
+                }
+            }
+<span class="pc" id="L48">        }</span>
+
+<span class="fc" id="L50">        return completedToDos;</span>
+    }
+
+    @Override
+    public ToDoItem findById(Long id) {
+<span class="fc" id="L55">        return toDos.get(id);</span>
+    }
+
+    @Override
+    public Long insert(ToDoItem toDoItem) {
+<span class="fc" id="L60">        Long id = currentId.incrementAndGet();</span>
+<span class="fc" id="L61">        toDoItem.setId(id);</span>
+<span class="fc" id="L62">        toDos.putIfAbsent(id, toDoItem);</span>
+<span class="fc" id="L63">        return id;</span>
+    }
+
+    @Override
+    public void update(ToDoItem toDoItem) {
+<span class="fc" id="L68">        toDos.replace(toDoItem.getId(), toDoItem);</span>
+<span class="fc" id="L69">    }</span>
+
+    @Override
+    public void delete(ToDoItem toDoItem) {
+<span class="fc" id="L73">        toDos.remove(toDoItem.getId());</span>
+<span class="fc" id="L74">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.1.201405082137</span></div></body></html>

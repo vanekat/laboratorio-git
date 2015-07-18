@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ToDoServlet.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">todo</a> &gt; <a href="index.source.html" class="el_package">com.manning.gia.todo.web</a> &gt; <span class="el_source">ToDoServlet.java</span></div><h1>ToDoServlet.java</h1><pre class="source lang-java linenums">package com.manning.gia.todo.web;
+
+import com.manning.gia.todo.model.ToDoItem;
+import com.manning.gia.todo.repository.InMemoryToDoRepository;
+import com.manning.gia.todo.repository.ToDoRepository;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+<span class="nc" id="L16">public class ToDoServlet extends HttpServlet {</span>
+    public static final String FIND_ALL_SERVLET_PATH = &quot;/all&quot;;
+    public static final String INDEX_PAGE = &quot;/jsp/todo-list.jsp&quot;;
+<span class="nc" id="L19">    private ToDoRepository toDoRepository = new InMemoryToDoRepository();</span>
+
+    @Override
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+<span class="nc" id="L23">        String servletPath = request.getServletPath();</span>
+<span class="nc" id="L24">        String view = processRequest(servletPath, request);</span>
+<span class="nc" id="L25">        RequestDispatcher dispatcher = request.getRequestDispatcher(view);</span>
+<span class="nc" id="L26">        dispatcher.forward(request, response);</span>
+<span class="nc" id="L27">    }</span>
+
+    private String processRequest(String servletPath, HttpServletRequest request) {
+<span class="nc bnc" id="L30" title="All 2 branches missed.">        if(servletPath.equals(FIND_ALL_SERVLET_PATH)) {</span>
+<span class="nc" id="L31">            List&lt;ToDoItem&gt; toDoItems = toDoRepository.findAll();</span>
+<span class="nc" id="L32">            request.setAttribute(&quot;toDoItems&quot;, toDoItems);</span>
+<span class="nc" id="L33">            request.setAttribute(&quot;stats&quot;, determineStats(toDoItems));</span>
+<span class="nc" id="L34">            request.setAttribute(&quot;filter&quot;, &quot;all&quot;);</span>
+<span class="nc" id="L35">            return INDEX_PAGE;</span>
+        }
+<span class="nc bnc" id="L37" title="All 2 branches missed.">        else if(servletPath.equals(&quot;/active&quot;)) {</span>
+<span class="nc" id="L38">            List&lt;ToDoItem&gt; toDoItems = toDoRepository.findAll();</span>
+<span class="nc" id="L39">            request.setAttribute(&quot;toDoItems&quot;, filterBasedOnStatus(toDoItems, true));</span>
+<span class="nc" id="L40">            request.setAttribute(&quot;stats&quot;, determineStats(toDoItems));</span>
+<span class="nc" id="L41">            request.setAttribute(&quot;filter&quot;, &quot;active&quot;);</span>
+<span class="nc" id="L42">            return INDEX_PAGE;</span>
+        }
+<span class="nc bnc" id="L44" title="All 2 branches missed.">        else if(servletPath.equals(&quot;/completed&quot;)) {</span>
+<span class="nc" id="L45">            List&lt;ToDoItem&gt; toDoItems = toDoRepository.findAll();</span>
+<span class="nc" id="L46">            request.setAttribute(&quot;toDoItems&quot;, filterBasedOnStatus(toDoItems, false));</span>
+<span class="nc" id="L47">            request.setAttribute(&quot;stats&quot;, determineStats(toDoItems));</span>
+<span class="nc" id="L48">            request.setAttribute(&quot;filter&quot;, &quot;completed&quot;);</span>
+<span class="nc" id="L49">            return INDEX_PAGE;</span>
+        }
+<span class="nc bnc" id="L51" title="All 2 branches missed.">        if(servletPath.equals(&quot;/insert&quot;)) {</span>
+<span class="nc" id="L52">            ToDoItem toDoItem = new ToDoItem();</span>
+<span class="nc" id="L53">            toDoItem.setName(request.getParameter(&quot;name&quot;));</span>
+<span class="nc" id="L54">            toDoRepository.insert(toDoItem);</span>
+<span class="nc" id="L55">            return &quot;/&quot; + request.getParameter(&quot;filter&quot;);</span>
+        }
+<span class="nc bnc" id="L57" title="All 2 branches missed.">        else if(servletPath.equals(&quot;/update&quot;)) {</span>
+<span class="nc" id="L58">            ToDoItem toDoItem = toDoRepository.findById(Long.parseLong(request.getParameter(&quot;id&quot;)));</span>
+
+<span class="nc bnc" id="L60" title="All 2 branches missed.">            if(toDoItem != null) {</span>
+<span class="nc" id="L61">                toDoItem.setName(request.getParameter(&quot;name&quot;));</span>
+<span class="nc" id="L62">                toDoRepository.update(toDoItem);</span>
+            }
+
+<span class="nc" id="L65">            return &quot;/&quot; + request.getParameter(&quot;filter&quot;);</span>
+        }
+<span class="nc bnc" id="L67" title="All 2 branches missed.">        else if(servletPath.equals(&quot;/delete&quot;)) {</span>
+<span class="nc" id="L68">            ToDoItem toDoItem = toDoRepository.findById(Long.parseLong(request.getParameter(&quot;id&quot;)));</span>
+
+<span class="nc bnc" id="L70" title="All 2 branches missed.">            if(toDoItem != null) {</span>
+<span class="nc" id="L71">                toDoRepository.delete(toDoItem);</span>
+            }
+
+<span class="nc" id="L74">            return &quot;/&quot; + request.getParameter(&quot;filter&quot;);</span>
+        }
+<span class="nc bnc" id="L76" title="All 2 branches missed.">        else if(servletPath.equals(&quot;/toggleStatus&quot;)) {</span>
+<span class="nc" id="L77">            ToDoItem toDoItem = toDoRepository.findById(Long.parseLong(request.getParameter(&quot;id&quot;)));</span>
+
+<span class="nc bnc" id="L79" title="All 2 branches missed.">            if(toDoItem != null) {</span>
+<span class="nc bnc" id="L80" title="All 2 branches missed.">                boolean completed = &quot;on&quot;.equals(request.getParameter(&quot;toggle&quot;)) ? true : false;</span>
+<span class="nc" id="L81">                toDoItem.setCompleted(completed);</span>
+<span class="nc" id="L82">                toDoRepository.update(toDoItem);</span>
+            }
+
+<span class="nc" id="L85">            return &quot;/&quot; + request.getParameter(&quot;filter&quot;);</span>
+        }
+<span class="nc bnc" id="L87" title="All 2 branches missed.">        else if(servletPath.equals(&quot;/clearCompleted&quot;)) {</span>
+<span class="nc" id="L88">            List&lt;ToDoItem&gt; toDoItems = toDoRepository.findAll();</span>
+
+<span class="nc bnc" id="L90" title="All 2 branches missed.">            for(ToDoItem toDoItem : toDoItems) {</span>
+<span class="nc bnc" id="L91" title="All 2 branches missed.">                if(toDoItem.isCompleted()) {</span>
+<span class="nc" id="L92">                    toDoRepository.delete(toDoItem);</span>
+                }
+            }
+
+<span class="nc" id="L96">            return &quot;/&quot; + request.getParameter(&quot;filter&quot;);</span>
+        }
+
+<span class="nc" id="L99">        return FIND_ALL_SERVLET_PATH;</span>
+    }
+
+    private List&lt;ToDoItem&gt; filterBasedOnStatus(List&lt;ToDoItem&gt; toDoItems, boolean active) {
+<span class="nc" id="L103">        List&lt;ToDoItem&gt; filteredToDoItems = new ArrayList&lt;ToDoItem&gt;();</span>
+
+<span class="nc bnc" id="L105" title="All 2 branches missed.">        for(ToDoItem toDoItem : toDoItems) {</span>
+<span class="nc bnc" id="L106" title="All 2 branches missed.">            if(toDoItem.isCompleted() != active) {</span>
+<span class="nc" id="L107">                filteredToDoItems.add(toDoItem);</span>
+            }
+        }
+
+<span class="nc" id="L111">        return filteredToDoItems;</span>
+    }
+
+    private ToDoListStats determineStats(List&lt;ToDoItem&gt; toDoItems) {
+<span class="nc" id="L115">        ToDoListStats toDoListStats = new ToDoListStats();</span>
+
+<span class="nc bnc" id="L117" title="All 2 branches missed.">        for(ToDoItem toDoItem : toDoItems) {</span>
+<span class="nc bnc" id="L118" title="All 2 branches missed.">            if(toDoItem.isCompleted()) {</span>
+<span class="nc" id="L119">                toDoListStats.addCompleted();</span>
+            }
+            else {
+<span class="nc" id="L122">                toDoListStats.addActive();</span>
+            }
+        }
+
+<span class="nc" id="L126">        return toDoListStats;</span>
+    }
+
+<span class="nc" id="L129">    public class ToDoListStats {</span>
+        private int active;
+        private int completed;
+
+        private void addActive() {
+<span class="nc" id="L134">            active++;</span>
+<span class="nc" id="L135">        }</span>
+
+        private void addCompleted() {
+<span class="nc" id="L138">            completed++;</span>
+<span class="nc" id="L139">        }</span>
+
+        public int getActive() {
+<span class="nc" id="L142">            return active;</span>
+        }
+
+        public int getCompleted() {
+<span class="nc" id="L146">            return completed;</span>
+        }
+
+        public int getAll() {
+<span class="nc" id="L150">            return active + completed;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.1.201405082137</span></div></body></html>
